@@ -1,0 +1,4 @@
+kubectl get ingress aam-ingress -n default -o wide
+kubectl get service aam-service -n default
+kubectl get pods -n default
+kubectl exec -it <pod-name> -n default -- curl http://aam-service:80
