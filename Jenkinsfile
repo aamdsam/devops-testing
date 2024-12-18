@@ -2,14 +2,14 @@ pipeline {
     agent any
     environment {
         // Define your Docker Hub credentials and image name here
-        DOCKER_IMAGE = 'aamdsam/jenkins-integration:latest' // Image name
+        DOCKER_IMAGE = 'aamdsam/devops-testing:latest' // Image name
         KUBE_CONTEXT = 'your-kube-context'  // Kube context if you have multiple clusters
         KUBERNETES_NAMESPACE = 'default'  // Replace with your namespace
     }
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/aamdsam/jenkins-integration.git'
+                git branch: 'master', url: 'https://github.com/aamdsam/devops-testing.git'
             }
         }
         stage('Build Docker Image') {
@@ -30,23 +30,12 @@ pipeline {
                 }
             }
         }
-        // stage('delete manifest in Kubernetes') {
-        //     steps {
-        //         script {
-        //             // Deploy to Kubernetes using kubectl
-        //             sh '''
-        //                 kubectl delete -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
-        //                 sleep 60
-        //             '''
-        //         }
-        //     }
-        // }
         stage('Deploy again to Kubernetes') {
             steps {
                 script {
                     // Deploy to Kubernetes using kubectl
                     sh '''
-                        kubectl apply -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
+                        kubectl apply -f k8s/aam.yaml -n $KUBERNETES_NAMESPACE
                     '''
                 }
             }
@@ -56,7 +45,7 @@ pipeline {
                 script {
                     // Deploy to Kubernetes using kubectl
                     sh '''
-                        kubectl rollout restart deployment/helloworld-app -n $KUBERNETES_NAMESPACE
+                        kubectl rollout restart deployment/aam-testing -n $KUBERNETES_NAMESPACE
                     '''
                 }
             }
