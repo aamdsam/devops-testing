@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        KUBE_CONTEXT = 'your-kube-context'  // Kube context if you have multiple clusters
-        KUBERNETES_NAMESPACE = 'default'  // Replace with your namespace
+        KUBE_CONTEXT = 'your-kube-context'  // Ganti dengan konteks kube jika ada beberapa cluster
+        KUBERNETES_NAMESPACE = 'default'  // Ganti dengan namespace yang digunakan
     }
     stages {
         stage('Check Secret and Ingress') {
@@ -13,7 +13,7 @@ pipeline {
                         script: "kubectl get secret aam-tls -o jsonpath='{.metadata.name}'",
                         returnStdout: true
                     ).trim()
-                    
+
                     if (secretExists != 'aam-tls') {
                         error "Secret aam-tls tidak ditemukan!"
                     }
@@ -21,12 +21,15 @@ pipeline {
                     // Periksa isi Secret aam-tls
                     sh "kubectl describe secret aam-tls"
 
+                    // Tambahkan langkah untuk memeriksa detail sertifikat
+                    sh "echo \"$(kubectl get secret aam-tls -o jsonpath='{.data.tls\\.crt}' | base64 -d)\" | openssl x509 -text -noout"
+
                     // Periksa apakah Ingress menggunakan Secret aam-tls
                     def ingressUsesSecret = sh(
                         script: "kubectl get ingress aam-ingress -o jsonpath='{.spec.tls[0].secretName}'",
                         returnStdout: true
                     ).trim()
-                    
+
                     if (ingressUsesSecret != 'aam-tls') {
                         error "Ingress aam-ingress tidak menggunakan Secret aam-tls!"
                     }
