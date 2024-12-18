@@ -61,7 +61,7 @@ spec:
             name: aam-service
             port:
               number: 80
-  # tls: 
-  # - hosts:
-  #   - portfolio-aam.dsam.web.id
-  #   secretName: portfolio-tls
+  tls:
+  - hosts:
+    - devops-aam.dsam.web.id
+    secretName: aam-tls

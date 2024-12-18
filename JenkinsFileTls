@@ -1,0 +1,20 @@
+pipeline {
+    agent any
+    environment {
+        KUBE_CONTEXT = 'your-kube-context'  // Kube context if you have multiple clusters
+        KUBERNETES_NAMESPACE = 'default'  // Replace with your namespace
+    }
+    stages {        
+        stage('Deploy secret') {
+            steps {
+                script {
+                    sh '''
+                        kubectl apply -f k8s/aam-secret.yaml -n $KUBERNETES_NAMESPACE
+                        kubectl get secret aam-tls
+                        kubectl describe ingress aam-ingress
+                    '''
+                }
+            }
+        }
+    }
+}
