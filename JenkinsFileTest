@@ -12,7 +12,7 @@ pipeline {
                     // sh 'helm repo add bitnami https://charts.bitnami.com/bitnami'
                     // sh 'helm repo update'
                     // sh 'kubectl create namespace wordpress'
-                    sh 'helm install my-wordpress bitnami/wordpress --namespace wordpress'
+                    sh 'helm install my-wordpress bitnami/wordpress --namespace wordpress --debug'
                     sh 'kubectl get pods -n wordpress'
                     sh 'kubectl get svc -n wordpress'
                     sh 'kubectl get secret --namespace wordpress my-wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode'
