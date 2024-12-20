@@ -9,25 +9,21 @@ pipeline {
         stage('Get Kubernetes Resources') {
             steps {
                 script {
-                    // sh 'helm repo add bitnami https://charts.bitnami.com/bitnami'
-                    // sh 'helm repo update'
-                    // sh 'kubectl create namespace wordpress'
-                    sh 'helm install my-wordpress bitnami/wordpress --namespace wordpress --debug'
-                    sh 'kubectl get pods -n wordpress'
-                    sh 'kubectl get svc -n wordpress'
-                    sh 'kubectl get secret --namespace wordpress my-wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode'
+                    sh 'kubectl get ingress aam-ingress -n default -o wide'
+                    sh 'kubectl get service aam-service -n default'
+                    sh 'kubectl get pods -n default'
                 }
             }
         }
 
-        // stage('Exec into Pod and Curl') {
-        //     steps {
-        //         script {
-        //             def podName = sh(script: "kubectl get pods -n default -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
-        //             echo "Executing curl inside pod: ${podName}"
-        //             sh "kubectl exec -it ${podName} -n default -- curl http://aam-service:80"
-        //         }
-        //     }
-        // }
+        stage('Exec into Pod and Curl') {
+            steps {
+                script {
+                    def podName = sh(script: "kubectl get pods -n default -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
+                    echo "Executing curl inside pod: ${podName}"
+                    sh "kubectl exec -it ${podName} -n default -- curl http://aam-service:80"
+                }
+            }
+        }
     }
 }
